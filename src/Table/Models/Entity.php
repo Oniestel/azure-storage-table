@@ -100,6 +100,9 @@ class Entity
         $p = Utilities::tryGetValue($this->_properties, $name);
         if (!is_null($p)) {
             $p->setValue($value);
+            if (is_string($value)) {
+                $p->setEdmType('Edm.String');
+            }
         }
     }
 
