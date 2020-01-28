@@ -129,10 +129,14 @@ class JsonODataReaderWriter implements IODataReaderWriter
      * @param string $body The HTTP response body.
      *
      * @return Entity
+     * @throws ODataParseException
      */
     public function parseEntity($body)
     {
         $rawEntity = json_decode($body, true);
+        if (!$rawEntity) {
+            throw new ODataParseException();
+        }
         return $this->parseOneEntity($rawEntity);
     }
 
@@ -142,13 +146,21 @@ class JsonODataReaderWriter implements IODataReaderWriter
      * @param string $body The HTTP response body.
      *
      * @return array
+     * @throws ODataParseException
      */
     public function parseEntities($body)
     {
         $rawEntities = json_decode($body, true);
         $entities   = array();
 
+        if (!$rawEntities || !isset($rawEntities[Resources::JSON_VALUE])) {
+            throw new ODataParseException();
+        }
+
         foreach ($rawEntities[Resources::JSON_VALUE] as $rawEntity) {
+            if (!$rawEntity) {
+                throw new ODataParseException();
+            }
             $entities[] = $this->parseOneEntity($rawEntity);
         }
 
